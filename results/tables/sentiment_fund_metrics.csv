@@ -1,0 +1,2 @@
+observations,start_date,end_date,total_return,annualized_return,annualized_volatility,sharpe_ratio,max_drawdown,fund,asset_family,method,base_method,sentiment_strength,min_multiplier,max_multiplier,transaction_cost_bps,average_turnover,total_transaction_cost
+753,2021-01-04,2023-12-29,0.33234251062032727,0.10078910087412485,0.14600005934864901,0.6903360267370843,-0.18270406739441225,Equity Sentiment Tilt,Equity,risk_parity_sentiment_tilt,risk_parity,0.15,0.7,1.3,10.0,0.0061057921075326465,0.004597661456972083
