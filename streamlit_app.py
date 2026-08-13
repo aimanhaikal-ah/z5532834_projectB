@@ -153,6 +153,11 @@ def csv_download_button(label: str, frame: pd.DataFrame, file_name: str) -> None
     )
 
 
+def plotly_chart(fig: go.Figure, **kwargs) -> None:
+    """Render Plotly figures using the app-selected template, not Streamlit's browser theme."""
+    st.plotly_chart(fig, theme=None, **kwargs)
+
+
 def risk_label(row: pd.Series) -> str:
     """Translate backtest risk into a simple app-facing label."""
     volatility = float(row["Ann. volatility (%)"])
@@ -1221,7 +1226,7 @@ with tab_compare:
         compare_returns = chart_returns.copy()
         if selected_funds:
             comparison_download = comparison_download_frame(compare_returns, selected_funds, compare_view)
-            st.plotly_chart(
+            plotly_chart(
                 comparison_chart(comparison_download, selected_funds, compare_view, fund_color_map),
                 width="stretch",
             )
@@ -1279,7 +1284,7 @@ with tab_compare:
         ]
     ].round(3)
     with st.container(border=True):
-        st.plotly_chart(robustness_chart(robustness, robustness_selected), width="stretch")
+        plotly_chart(robustness_chart(robustness, robustness_selected), width="stretch")
         csv_download_button(
             "robustness chart data",
             robustness_table,
@@ -1377,13 +1382,13 @@ with tab_fact_sheet:
                 )
                 fig.update_traces(line_color=fund_color_map.get(fact_sheet_fund, "#B0172E"))
                 fig.update_layout(showlegend=False, hovermode="x unified")
-                st.plotly_chart(fig, width="stretch")
+                plotly_chart(fig, width="stretch")
                 filtered_sentiment_weights = sentiment_weights[
                     sentiment_weights["date"].between(global_start, global_end)
                 ].copy()
-                st.plotly_chart(sector_weight_chart(filtered_sentiment_weights), width="stretch")
+                plotly_chart(sector_weight_chart(filtered_sentiment_weights), width="stretch")
             else:
-                st.plotly_chart(drawdown_chart(chart_returns, fact_sheet_fund), width="stretch")
+                plotly_chart(drawdown_chart(chart_returns, fact_sheet_fund), width="stretch")
             csv_download_button(
                 "fact sheet chart data",
                 returns_frame[returns_frame["date"].between(global_start, global_end)].copy(),
@@ -1539,7 +1544,7 @@ with tab_allocation:
             metric_card(growth_cols[2], "Fee drag per $1", f"${fee_drag:.3f}", f"{annual_fee:.2f}% p.a.")
             with st.container(border=True):
                 st.markdown("**Gross and net allocation growth**")
-                st.plotly_chart(allocation_growth_chart(allocation_growth), width="stretch")
+                plotly_chart(allocation_growth_chart(allocation_growth), width="stretch")
                 st.caption(
                     "The management fee is deducted daily from the selected historical allocation. "
                     "Values start at $1 over the global date range."
@@ -1550,7 +1555,7 @@ with tab_allocation:
                     "betavest_allocation_growth_data.csv",
                 )
         with st.container(border=True):
-            st.plotly_chart(allocation_chart(normalised, fund_color_map), width="stretch")
+            plotly_chart(allocation_chart(normalised, fund_color_map), width="stretch")
             csv_download_button(
                 "allocation chart data",
                 allocation_download_frame(allocation_frame),
@@ -1606,7 +1611,7 @@ with tab_sentiment:
                 f"{fear_greed_status} reading from the latest 21-day sector sentiment average "
                 f"at {latest_sentiment_date}."
             )
-            st.plotly_chart(
+            plotly_chart(
                 fear_greed_gauge(float(fear_greed_score), fear_greed_status),
                 width="stretch",
             )
@@ -1640,7 +1645,7 @@ with tab_sentiment:
                 hovermode="x unified",
                 showlegend=False,
             )
-            st.plotly_chart(pulse_fig, width="stretch")
+            plotly_chart(pulse_fig, width="stretch")
     cols = st.columns(4)
     metric_card(cols[0], "Highest average sentiment", strongest["Sector"], f"{strongest['Average sentiment']:.3f}")
     metric_card(cols[1], "Lowest average sentiment", weakest["Sector"], f"{weakest['Average sentiment']:.3f}")
@@ -1653,7 +1658,7 @@ with tab_sentiment:
                 sentiment_chart_data = chart_sentiment[
                     chart_sentiment["sector"].isin(selected_sectors)
                 ].copy()
-                st.plotly_chart(sentiment_chart(sentiment_chart_data, selected_sectors), width="stretch")
+                plotly_chart(sentiment_chart(sentiment_chart_data, selected_sectors), width="stretch")
                 csv_download_button(
                     "sector sentiment chart data",
                     sentiment_chart_data,
@@ -1776,7 +1781,7 @@ with tab_sentiment:
         if fund in sentiment_regimes["Fund"].unique()
     ]
     with st.container(border=True):
-        st.plotly_chart(
+        plotly_chart(
             sentiment_regime_chart(sentiment_regimes, regime_funds, fund_color_map),
             width="stretch",
         )
